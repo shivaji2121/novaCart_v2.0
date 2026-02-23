@@ -1,6 +1,8 @@
 package com.novaCart.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -12,7 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table
+@Table(name = "products")
 public class Products {
 
     @Id
@@ -28,8 +30,11 @@ public class Products {
     @Column(name = "price")
     private BigDecimal price;
 
-    @Column(name = "stock")
-    private Integer stock;
+    @Column(name = "quantity")
+    private Integer quantity;
+
+    @Column(name = "description",nullable = false)
+    private String description;
 
     @CreationTimestamp
     @Column(name = "created_at")
