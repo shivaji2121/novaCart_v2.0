@@ -2,10 +2,7 @@ package com.novaCart.entity;
 
 import com.novaCart.utils.CustomerStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -18,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 @Table(name = "customers")
 public class CustomersEntity {
     @Id
@@ -56,7 +54,8 @@ public class CustomersEntity {
     private  LocalDateTime deletedAt;
 
     //one user may have multiple addresses
-    @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL,orphanRemoval = true)
+    //orphan removal means
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AddressEntity> address;
 
 }

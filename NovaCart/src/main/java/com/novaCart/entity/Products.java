@@ -1,45 +1,35 @@
 package com.novaCart.entity;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
-@NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Table(name = "addresses")
-public class AddressEntity {
+@NoArgsConstructor
+@Table
+public class Products {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  Long id;
+    private  long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id",referencedColumnName = "id")
-    private CustomersEntity customer;
+    @Column(name = "product_name")
+    private  String name;
 
-    @Column(name = "street")
-    private String street;
+    @Column(name = "category")
+    private  String category;
 
-    @Column(name = "city")
-    private  String city;
+    @Column(name = "price")
+    private BigDecimal price;
 
-    @Column(name = "state")
-    private String state;
-
-    @Column(name = "country")
-    private String country;
-
-    @Column(name = "zip_code")
-    private String zipCode;
+    @Column(name = "stock")
+    private Integer stock;
 
     @CreationTimestamp
     @Column(name = "created_at")

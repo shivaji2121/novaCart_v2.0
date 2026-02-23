@@ -2,6 +2,7 @@ package com.novaCart.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.novaCart.entity.CustomersEntity;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AddressDto {
+
 
     private Long id;
 
@@ -37,4 +39,6 @@ public class AddressDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
+
+    public CustomersEntity customersEntity;
 }

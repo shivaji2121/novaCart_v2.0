@@ -2,6 +2,7 @@ package com.novaCart.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.novaCart.utils.CustomerStatus;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -30,7 +31,7 @@ public class CustomerDto {
     @NotBlank(message = "Password is required")
     private String password;
 
-    private CustomerStatus status;
+    private CustomerStatus customerStatus;
 
     @NotNull(message = "Age is required")
     @Min(value = 0, message = "Age cannot be negative")
@@ -45,6 +46,9 @@ public class CustomerDto {
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
+
+    @Valid
+    @NotEmpty(message = "At least one address is required")
     private List<AddressDto> addresses;
 
 
