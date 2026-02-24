@@ -48,7 +48,8 @@ public class OrdersServiceImpl implements OrdersService{
           }
 
           if(itemDto.getQuantity()>product.getQuantity()){
-              throw  new InvalidQuantityException("Quantity should not exceed the stock");
+              throw new InvalidQuantityException("Sorry Only " + product.getQuantity() +" unit(s) of '" + product.getName() + "' are available."
+              );
           }
 
           product.setQuantity(product.getQuantity()- itemDto.getQuantity());

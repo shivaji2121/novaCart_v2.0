@@ -46,6 +46,7 @@ public class CustomerServiceImpl implements CustomerService {
             List<AddressEntity> addressEntityList=customerDto.getAddresses().stream()
                     .map(addressDto -> AddressEntity.builder()
                             .city(addressDto.getCity())
+                            .street(addressDto.getStreet())
                             .country(addressDto.getCountry())
                             .state(addressDto.getState())
                             .zipCode(addressDto.getZipCode())
