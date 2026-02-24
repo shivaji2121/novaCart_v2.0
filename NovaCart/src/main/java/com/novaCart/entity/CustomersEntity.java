@@ -13,8 +13,7 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @Builder
 @Table(name = "customers")
 public class CustomersEntity {
@@ -54,8 +53,11 @@ public class CustomersEntity {
     private  LocalDateTime deletedAt;
 
     //one user may have multiple addresses
-    //orphan removal means
+    //orphan removal means--when u remove child relation from parent then the related child is automatically deleted
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AddressEntity> address;
+
+    @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<OrdersEntity> orders;
 
 }

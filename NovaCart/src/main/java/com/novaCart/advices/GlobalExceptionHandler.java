@@ -1,5 +1,6 @@
 package com.novaCart.advices;
 
+import com.novaCart.exception.ResourceAlreadyExistsException;
 import com.novaCart.exception.ResourceNofFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +21,18 @@ public class GlobalExceptionHandler {
                 .message(exception.getMessage())
                 .build();
         return buildErrorResponseEntity(apiError);
+    };
+
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public ResponseEntity<ApiResponse<?>> handleResourceAlreadyExists(ResourceAlreadyExistsException exception) {
+
+        ApiError apiError = ApiError.builder()
+                .status(HttpStatus.CONFLICT)   // 409
+                .message(exception.getMessage())
+                .build();
+
+        return buildErrorResponseEntity(apiError);
     }
-
-    ;
-
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> handleInternalServerError(Exception exception) {

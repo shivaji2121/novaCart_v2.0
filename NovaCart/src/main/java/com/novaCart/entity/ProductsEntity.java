@@ -1,27 +1,30 @@
 package com.novaCart.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Entity
+@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 @Table(name = "products")
-public class Products {
+public class ProductsEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  long id;
 
-    @Column(name = "product_name")
+    @Column(name = "product_name",unique = true)
     private  String name;
 
     @Column(name = "category")
@@ -46,5 +49,8 @@ public class Products {
 
     @Column(name = "deleted_at")
     private  LocalDateTime deletedAt;
+
+    @OneToMany(mappedBy = "products",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<OrderItemsEntity> orderItems;
 
 }
