@@ -1,5 +1,6 @@
 package com.novaCart.advices;
 
+import com.novaCart.exception.InvalidQuantityException;
 import com.novaCart.exception.ResourceAlreadyExistsException;
 import com.novaCart.exception.ResourceNofFoundException;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -34,6 +36,16 @@ public class GlobalExceptionHandler {
         return buildErrorResponseEntity(apiError);
     }
 
+    @ExceptionHandler(InvalidQuantityException.class)
+    public ResponseEntity<ApiResponse<?>> handleInvalidQuantity(InvalidQuantityException exception) {
+
+        ApiError apiError = ApiError.builder()
+                .status(HttpStatus.BAD_REQUEST) // 400
+                .message(exception.getMessage())
+                .build();
+
+        return buildErrorResponseEntity(apiError);
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> handleInternalServerError(Exception exception) {
         ApiError apiError = ApiError.builder()
@@ -43,7 +55,7 @@ public class GlobalExceptionHandler {
         return buildErrorResponseEntity(apiError);
     }
 
-    ;
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<?>> handleInputValidationErrors(MethodArgumentNotValidException exception) {
