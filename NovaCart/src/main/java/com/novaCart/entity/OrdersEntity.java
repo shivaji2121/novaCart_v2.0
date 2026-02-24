@@ -30,6 +30,7 @@ public class OrdersEntity {
     private CustomersEntity customer;
 
     @Column(name = "status",nullable = false)
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
     @Column(name = "total_amount")

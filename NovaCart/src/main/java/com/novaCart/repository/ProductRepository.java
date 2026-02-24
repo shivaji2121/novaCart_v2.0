@@ -13,6 +13,5 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<ProductsEntity,Long> {
     boolean existsByNameAndDeletedAtIsNull(String name);
-
     Optional<ProductsEntity> findByIdAndDeletedAtIsNull(Long id);
 }

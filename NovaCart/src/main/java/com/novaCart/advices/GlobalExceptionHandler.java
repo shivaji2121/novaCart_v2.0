@@ -1,6 +1,7 @@
 package com.novaCart.advices;
 
 import com.novaCart.exception.InvalidQuantityException;
+import com.novaCart.exception.OrderCannotBeCancelledException;
 import com.novaCart.exception.ResourceAlreadyExistsException;
 import com.novaCart.exception.ResourceNofFoundException;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,15 @@ public class GlobalExceptionHandler {
                 .message(exception.getMessage())
                 .build();
 
+        return buildErrorResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(OrderCannotBeCancelledException.class)
+    public ResponseEntity<ApiResponse<?>> handleOrderCannotBeCancelled(OrderCannotBeCancelledException exception) {
+        ApiError apiError = ApiError.builder()
+                .status(HttpStatus.UNPROCESSABLE_ENTITY) // Or HttpStatus.UNPROCESSABLE_ENTITY
+                .message(exception.getMessage())
+                .build();
         return buildErrorResponseEntity(apiError);
     }
 

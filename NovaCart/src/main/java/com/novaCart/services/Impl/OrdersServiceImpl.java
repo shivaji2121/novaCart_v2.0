@@ -8,6 +8,7 @@ import com.novaCart.entity.OrderItemsEntity;
 import com.novaCart.entity.OrdersEntity;
 import com.novaCart.entity.ProductsEntity;
 import com.novaCart.exception.InvalidQuantityException;
+import com.novaCart.exception.OrderCannotBeCancelledException;
 import com.novaCart.exception.ResourceNofFoundException;
 import com.novaCart.repository.CustomerRepository;
 import com.novaCart.repository.OrderItemsRepository;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -100,7 +102,25 @@ public class OrdersServiceImpl implements OrdersService{
                 .items(itemsDto)
                 .build();
     }
+
+    @Override
+    public String cancelOrder(Long orderId) {
+        Optional<OrdersEntity> savedOrder=ordersRepository.findProductByIdAndDeletedAtIsNull(orderId);
+        if(savedOrder.isEmpty()){
+            throw new ResourceNofFoundException("Order not found with id: "+orderId);
+        }
+
+        if(savedOrder.get().getOrderStatus()==OrderStatus.DELIVERED){
+            throw new OrderCannotBeCancelledException("Ordered cannot be cancelled");
+        }
+
+
+
+        return null;
     }
+
+
+}
 
 
 

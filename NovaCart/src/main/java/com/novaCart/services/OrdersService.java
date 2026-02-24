@@ -7,4 +7,6 @@ import jakarta.validation.Valid;
 
 public interface OrdersService {
     OrdersResponseDto createOrder(OrdersRequestDto ordersRequestDto);
+
+    String cancelOrder(Long orderId);
 }
