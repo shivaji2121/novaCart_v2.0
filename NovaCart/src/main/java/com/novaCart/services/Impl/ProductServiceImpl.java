@@ -8,6 +8,8 @@ import com.novaCart.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
@@ -23,6 +25,14 @@ public class ProductServiceImpl implements ProductService {
         ProductsEntity productsEntity=toEntity(productDto);
         ProductsEntity savedProduct= productRepository.save(productsEntity);
         return EntityToDto(savedProduct);
+    }
+
+    @Override
+    public List<ProductDto> getAllProducts() {
+       return productRepository.findAll().stream()
+                .map(productsEntity ->EntityToDto(productsEntity) )
+                .toList();
+
     }
 
     private ProductsEntity toEntity(ProductDto productDto){
