@@ -1,5 +1,6 @@
 package com.novaCart.services.Impl;
 
+import com.novaCart.advices.ApiResponse;
 import com.novaCart.dto.OrderItemResponseDto;
 import com.novaCart.dto.OrdersRequestDto;
 import com.novaCart.dto.OrdersResponseDto;
@@ -18,9 +19,11 @@ import com.novaCart.services.OrdersService;
 import com.novaCart.utils.OrderStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,23 +107,40 @@ public class OrdersServiceImpl implements OrdersService{
     }
 
     @Override
-    public String cancelOrder(Long orderId) {
-        Optional<OrdersEntity> savedOrder=ordersRepository.findProductByIdAndDeletedAtIsNull(orderId);
-        if(savedOrder.isEmpty()){
-            throw new ResourceNofFoundException("Order not found with id: "+orderId);
+    @Transactional
+    public ApiResponse<String> cancelOrder(Long orderId) {
+       OrdersEntity savedOrder=ordersRepository.findProductByIdAndDeletedAtIsNull(orderId).
+               orElseThrow(()->new ResourceNofFoundException("Order not found with id: "+orderId));
+
+        if (savedOrder.getOrderStatus() == OrderStatus.CANCELLED) {
+            throw new OrderCannotBeCancelledException("Order is already cancelled");
         }
 
-        if(savedOrder.get().getOrderStatus()==OrderStatus.DELIVERED){
+        if (savedOrder.getOrderStatus() == OrderStatus.DELIVERED) {
             throw new OrderCannotBeCancelledException("Ordered cannot be cancelled");
         }
 
 
+        for (OrderItemsEntity items : savedOrder.getOrderItems()) {
+           ProductsEntity  product=items.getProducts();
+           product.setQuantity(product.getQuantity()+items.getQuantity());
 
-        return null;
+           product.setUpdatedAt(LocalDateTime.now());
+           productRepository.save(product);
+        }
+
+
+        savedOrder.setOrderStatus(OrderStatus.CANCELLED);
+        savedOrder.setUpdatedAt(LocalDateTime.now());
+
+        ordersRepository.save(savedOrder);
+
+        return new ApiResponse<>("Order cancelled successfully");
+    }
     }
 
 
-}
+
 
 
 

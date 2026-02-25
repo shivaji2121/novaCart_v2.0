@@ -1,5 +1,6 @@
 package com.novaCart.controllers;
 
+import com.novaCart.advices.ApiResponse;
 import com.novaCart.dto.OrdersRequestDto;
 import com.novaCart.dto.OrdersResponseDto;
 import com.novaCart.dto.ProductDto;
@@ -26,9 +27,8 @@ public class OrderController {
         return  new ResponseEntity<>(productDto, HttpStatus.CREATED);
     }
 
-    @PutMapping(path = "/{orderId}")
-    public ResponseEntity<String> c(@PathVariable Long orderId){
-        String orderCancelled=ordersService.cancelOrder(orderId);
-        return ResponseEntity.ok(orderCancelled);
+    @PutMapping("/{orderId}/cancel")
+    public ResponseEntity<ApiResponse<String>> cancelOrder(@PathVariable Long orderId) {
+        return ResponseEntity.ok(ordersService.cancelOrder(orderId));
     }
 }

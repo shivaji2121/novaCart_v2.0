@@ -1,12 +1,12 @@
 package com.novaCart.services;
 
+import com.novaCart.advices.ApiResponse;
 import com.novaCart.dto.OrdersRequestDto;
 import com.novaCart.dto.OrdersResponseDto;
-import com.novaCart.dto.ProductDto;
-import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 
 public interface OrdersService {
     OrdersResponseDto createOrder(OrdersRequestDto ordersRequestDto);
 
-    String cancelOrder(Long orderId);
+    ApiResponse<String>  cancelOrder(Long orderId);
 }
