@@ -139,7 +139,6 @@ public class OrdersServiceImpl implements OrdersService{
     }
 
 
-
     public ApiResponse<OrdersResponseDto> getOrderById(Long orderId){
         OrdersEntity orders= ordersRepository.findProductByIdAndDeletedAtIsNull(orderId)
                 .orElseThrow(()->new ResourceNofFoundException("Order not found with id: "+orderId));
@@ -174,6 +173,8 @@ public class OrdersServiceImpl implements OrdersService{
                 .build();
         return  new ApiResponse<>(ordersResponseDto);
     };
+
+
 
     }
 
