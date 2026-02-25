@@ -9,4 +9,6 @@ public interface OrdersService {
     OrdersResponseDto createOrder(OrdersRequestDto ordersRequestDto);
 
     ApiResponse<String>  cancelOrder(Long orderId);
+
+    ApiResponse<OrdersResponseDto> getOrderById(Long orderId);
 }

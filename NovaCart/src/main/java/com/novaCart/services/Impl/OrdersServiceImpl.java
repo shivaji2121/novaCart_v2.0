@@ -137,6 +137,44 @@ public class OrdersServiceImpl implements OrdersService{
 
         return new ApiResponse<>("Order cancelled successfully");
     }
+
+
+
+    public ApiResponse<OrdersResponseDto> getOrderById(Long orderId){
+        OrdersEntity orders= ordersRepository.findProductByIdAndDeletedAtIsNull(orderId)
+                .orElseThrow(()->new ResourceNofFoundException("Order not found with id: "+orderId));
+
+
+        BigDecimal totalPrice = orders.getOrderItems().stream()
+                .map(OrderItemsEntity::getPriceAtOrder)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        List<OrderItemResponseDto> ordersItemsList=orders.getOrderItems().stream()
+                .map(orderItemsEntity ->OrderItemResponseDto.builder()
+                        .productName(orderItemsEntity.getProducts().getName())
+                        .quantity(orderItemsEntity.getQuantity())
+                        .productId(orderItemsEntity.getProducts().getId())
+                        .price(orderItemsEntity.getProducts().getPrice())
+                        .totalPrice(orderItemsEntity.getPriceAtOrder())
+                        .build() )
+                .toList();
+
+
+
+        OrdersResponseDto ordersResponseDto =OrdersResponseDto.builder()
+                .id(orders.getId())
+                .customerId(orders.getCustomer().getId())
+                .customerName(orders.getCustomer().getName())
+                .orderStatus(orders.getOrderStatus())
+                .totalAmount(totalPrice)
+                .createdAt(orders.getCreatedAt())
+                .updatedAt(orders.getUpdatedAt())
+                .deletedAt(orders.getDeletedAt())
+                .items(ordersItemsList)
+                .build();
+        return  new ApiResponse<>(ordersResponseDto);
+    };
+
     }
 
 

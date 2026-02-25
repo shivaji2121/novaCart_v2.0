@@ -31,4 +31,10 @@ public class OrderController {
     public ResponseEntity<ApiResponse<String>> cancelOrder(@PathVariable Long orderId) {
         return ResponseEntity.ok(ordersService.cancelOrder(orderId));
     }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<ApiResponse<OrdersResponseDto>> getOrderById(@PathVariable Long orderId) {
+        return ResponseEntity.ok(ordersService.getOrderById(orderId));
+    }
+
 }
