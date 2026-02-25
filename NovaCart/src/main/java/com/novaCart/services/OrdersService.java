@@ -3,7 +3,10 @@ package com.novaCart.services;
 import com.novaCart.advices.ApiResponse;
 import com.novaCart.dto.OrdersRequestDto;
 import com.novaCart.dto.OrdersResponseDto;
+import com.novaCart.dto.TopOrdersResponse;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public interface OrdersService {
     OrdersResponseDto createOrder(OrdersRequestDto ordersRequestDto);
@@ -11,4 +14,6 @@ public interface OrdersService {
     ApiResponse<String>  cancelOrder(Long orderId);
 
     ApiResponse<OrdersResponseDto> getOrderById(Long orderId);
+
+    List<TopOrdersResponse> getTopOrderOfCustomers();
 }

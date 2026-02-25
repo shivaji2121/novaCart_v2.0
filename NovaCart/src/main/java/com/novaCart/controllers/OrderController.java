@@ -4,6 +4,7 @@ import com.novaCart.advices.ApiResponse;
 import com.novaCart.dto.OrdersRequestDto;
 import com.novaCart.dto.OrdersResponseDto;
 import com.novaCart.dto.ProductDto;
+import com.novaCart.dto.TopOrdersResponse;
 import com.novaCart.repository.OrdersRepository;
 import com.novaCart.services.OrdersService;
 import jakarta.validation.Valid;
@@ -12,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,6 +38,11 @@ public class OrderController {
     @GetMapping("/{orderId}")
     public ResponseEntity<ApiResponse<OrdersResponseDto>> getOrderById(@PathVariable Long orderId) {
         return ResponseEntity.ok(ordersService.getOrderById(orderId));
+    }
+
+    @GetMapping("/analytics/top-customers")
+    public ResponseEntity<List<TopOrdersResponse>> getTopOrderOfCustomers() {
+        return ResponseEntity.ok(ordersService.getTopOrderOfCustomers());
     }
 
 }

@@ -4,6 +4,7 @@ import com.novaCart.advices.ApiResponse;
 import com.novaCart.dto.OrderItemResponseDto;
 import com.novaCart.dto.OrdersRequestDto;
 import com.novaCart.dto.OrdersResponseDto;
+import com.novaCart.dto.TopOrdersResponse;
 import com.novaCart.entity.CustomersEntity;
 import com.novaCart.entity.OrderItemsEntity;
 import com.novaCart.entity.OrdersEntity;
@@ -19,13 +20,11 @@ import com.novaCart.services.OrdersService;
 import com.novaCart.utils.OrderStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -172,6 +171,12 @@ public class OrdersServiceImpl implements OrdersService{
                 .items(ordersItemsList)
                 .build();
         return  new ApiResponse<>(ordersResponseDto);
+    }
+
+    @Override
+    public List<TopOrdersResponse> getTopOrderOfCustomers() {
+        List<TopOrdersResponse> topCustomers=ordersRepository.findTopCustomers().stream().limit(3).toList();
+        return topCustomers;
     };
 
 
