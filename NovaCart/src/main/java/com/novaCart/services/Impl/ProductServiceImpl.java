@@ -6,12 +6,20 @@ import com.novaCart.exception.ResourceAlreadyExistsException;
 import com.novaCart.repository.ProductRepository;
 import com.novaCart.services.ProductService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
@@ -29,11 +37,26 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDto> getAllProducts() {
+
+
        return productRepository.findAll().stream()
                 .map(productsEntity ->EntityToDto(productsEntity) )
                 .toList();
-
     }
+
+    @Override
+    public Page<ProductDto> getAllProductsByPagination(Integer page, Integer pageSize, String search, String category) {
+        int pageNumber = (page <= 0) ? 0 : page - 1;
+        Pageable pageable= PageRequest.of(pageNumber,pageSize,  Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        search=(search==null)?"":search;
+
+        category=(category==null)?"":category;
+
+        Page<ProductsEntity> listOfProducts=productRepository.findByNameContainingIgnoreCaseAndCategoryContainingIgnoreCase(search,category,pageable);
+        return listOfProducts.map(this::EntityToDto);
+    }
+
 
     private ProductsEntity toEntity(ProductDto productDto){
         return  ProductsEntity.builder()
@@ -58,4 +81,9 @@ public class ProductServiceImpl implements ProductService {
                 .deletedAt(productsEntity.getDeletedAt())
                 .build();
     }
+
+
+
+
+
 }

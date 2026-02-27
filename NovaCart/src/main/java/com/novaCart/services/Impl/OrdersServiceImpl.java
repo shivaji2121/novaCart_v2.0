@@ -20,15 +20,17 @@ import com.novaCart.services.OrdersService;
 import com.novaCart.utils.OrderStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-public class OrdersServiceImpl implements OrdersService{
+public class OrdersServiceImpl implements OrdersService {
 
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
@@ -36,28 +38,27 @@ public class OrdersServiceImpl implements OrdersService{
     private final OrderItemsRepository orderItemsRepository;
 
 
-
     @Override
     @Transactional
     public OrdersResponseDto createOrder(OrdersRequestDto ordersRequestDto) {
-     CustomersEntity customer= customerRepository.findActiveCustomerById(ordersRequestDto.getCustomerId())
-                .orElseThrow(()-> new ResourceNofFoundException("Customer not found"));
+        CustomersEntity customer = customerRepository.findActiveCustomerById(ordersRequestDto.getCustomerId())
+                .orElseThrow(() -> new ResourceNofFoundException("Customer not found"));
+log.info("1..>{}"+customer);
+        List<OrderItemsEntity> orderItems = ordersRequestDto.getItems().stream().map(itemDto -> {
+            ProductsEntity product = productRepository.findByIdAndDeletedAtIsNull(itemDto.getProductId())
+                    .orElseThrow(() -> new ResourceNofFoundException("product not found with id: " + itemDto.getProductId()));
 
-        List<OrderItemsEntity> orderItems=ordersRequestDto.getItems().stream().map(itemDto->{
-          ProductsEntity   product=productRepository.findByIdAndDeletedAtIsNull(itemDto.getProductId())
-                  .orElseThrow(()->new ResourceNofFoundException("product not found with id: "+itemDto.getProductId()));
+            if (itemDto.getQuantity() <= 0) {
+                throw new InvalidQuantityException("Quantity must be greater than zero: " + itemDto.getProductId());
+            }
 
-          if(itemDto.getQuantity()<=0){
-              throw new InvalidQuantityException("Quantity must be greater than zero: " + itemDto.getProductId());
-          }
+            if (itemDto.getQuantity() > product.getQuantity()) {
+                throw new InvalidQuantityException("Sorry Only " + product.getQuantity() + " unit(s) of '" + product.getName() + "' are available."
+                );
+            }
 
-          if(itemDto.getQuantity()>product.getQuantity()){
-              throw new InvalidQuantityException("Sorry Only " + product.getQuantity() +" unit(s) of '" + product.getName() + "' are available."
-              );
-          }
-
-          product.setQuantity(product.getQuantity()- itemDto.getQuantity());
-          productRepository.save(product);
+            product.setQuantity(product.getQuantity() - itemDto.getQuantity());
+            productRepository.save(product);
 
             return OrderItemsEntity.builder()
                     .products(product)
@@ -66,7 +67,7 @@ public class OrdersServiceImpl implements OrdersService{
                     .build();
 
         }).toList();
-
+        log.info("1..>{}"+orderItems);
         BigDecimal totalPrice = orderItems.stream()
                 .map(OrderItemsEntity::getPriceAtOrder)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -78,7 +79,7 @@ public class OrdersServiceImpl implements OrdersService{
                 .orderItems(orderItems)
                 .build();
 
-        orderItems.forEach(item -> item.setOrders(order));
+//        orderItems.forEach(item -> item.setOrders(order));
 
         OrdersEntity savedOrder = ordersRepository.save(order);
 
@@ -92,7 +93,8 @@ public class OrdersServiceImpl implements OrdersService{
                         .build())
                 .toList();
 
-        return  OrdersResponseDto.builder()
+        log.info("2..>{}"+itemsDto);
+        return OrdersResponseDto.builder()
                 .id(savedOrder.getId())
                 .customerId(customer.getId())
                 .customerName(customer.getName())
@@ -108,8 +110,8 @@ public class OrdersServiceImpl implements OrdersService{
     @Override
     @Transactional
     public ApiResponse<String> cancelOrder(Long orderId) {
-       OrdersEntity savedOrder=ordersRepository.findProductByIdAndDeletedAtIsNull(orderId).
-               orElseThrow(()->new ResourceNofFoundException("Order not found with id: "+orderId));
+        OrdersEntity savedOrder = ordersRepository.findProductByIdAndDeletedAtIsNull(orderId).
+                orElseThrow(() -> new ResourceNofFoundException("Order not found with id: " + orderId));
 
         if (savedOrder.getOrderStatus() == OrderStatus.CANCELLED) {
             throw new OrderCannotBeCancelledException("Order is already cancelled");
@@ -121,11 +123,11 @@ public class OrdersServiceImpl implements OrdersService{
 
 
         for (OrderItemsEntity items : savedOrder.getOrderItems()) {
-           ProductsEntity  product=items.getProducts();
-           product.setQuantity(product.getQuantity()+items.getQuantity());
+            ProductsEntity product = items.getProducts();
+            product.setQuantity(product.getQuantity() + items.getQuantity());
 
-           product.setUpdatedAt(LocalDateTime.now());
-           productRepository.save(product);
+            product.setUpdatedAt(LocalDateTime.now());
+            productRepository.save(product);
         }
 
 
@@ -138,28 +140,27 @@ public class OrdersServiceImpl implements OrdersService{
     }
 
 
-    public ApiResponse<OrdersResponseDto> getOrderById(Long orderId){
-        OrdersEntity orders= ordersRepository.findProductByIdAndDeletedAtIsNull(orderId)
-                .orElseThrow(()->new ResourceNofFoundException("Order not found with id: "+orderId));
+    public ApiResponse<OrdersResponseDto> getOrderById(Long orderId) {
+        OrdersEntity orders = ordersRepository.findProductByIdAndDeletedAtIsNull(orderId)
+                .orElseThrow(() -> new ResourceNofFoundException("Order not found with id: " + orderId));
 
 
         BigDecimal totalPrice = orders.getOrderItems().stream()
                 .map(OrderItemsEntity::getPriceAtOrder)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        List<OrderItemResponseDto> ordersItemsList=orders.getOrderItems().stream()
-                .map(orderItemsEntity ->OrderItemResponseDto.builder()
+        List<OrderItemResponseDto> ordersItemsList = orders.getOrderItems().stream()
+                .map(orderItemsEntity -> OrderItemResponseDto.builder()
                         .productName(orderItemsEntity.getProducts().getName())
                         .quantity(orderItemsEntity.getQuantity())
                         .productId(orderItemsEntity.getProducts().getId())
                         .price(orderItemsEntity.getProducts().getPrice())
                         .totalPrice(orderItemsEntity.getPriceAtOrder())
-                        .build() )
+                        .build())
                 .toList();
 
 
-
-        OrdersResponseDto ordersResponseDto =OrdersResponseDto.builder()
+        OrdersResponseDto ordersResponseDto = OrdersResponseDto.builder()
                 .id(orders.getId())
                 .customerId(orders.getCustomer().getId())
                 .customerName(orders.getCustomer().getName())
@@ -170,18 +171,21 @@ public class OrdersServiceImpl implements OrdersService{
                 .deletedAt(orders.getDeletedAt())
                 .items(ordersItemsList)
                 .build();
-        return  new ApiResponse<>(ordersResponseDto);
+        return new ApiResponse<>(ordersResponseDto);
     }
 
     @Override
-    public List<TopOrdersResponse> getTopOrderOfCustomers() {
-        List<TopOrdersResponse> topCustomers=ordersRepository.findTopCustomers().stream().limit(3).toList();
+    public List<TopOrdersResponse> getTopOrderOfCustomers(Integer limit) {
+        log.info("{}"+limit);
+        List<TopOrdersResponse> topCustomers = ordersRepository.findTopCustomers().stream().limit(limit).toList();
+        log.info("{}"+topCustomers);
         return topCustomers;
-    };
-
-
-
     }
+
+    ;
+
+
+}
 
 
 

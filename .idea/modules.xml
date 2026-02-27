@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/NovaCart/NovaCart.iml" filepath="$PROJECT_DIR$/NovaCart/NovaCart.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/NovaCart.iml" filepath="$PROJECT_DIR$/.idea/NovaCart.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/novaCart_v2.0.iml" filepath="$PROJECT_DIR$/.idea/novaCart_v2.0.iml" />
     </modules>
   </component>

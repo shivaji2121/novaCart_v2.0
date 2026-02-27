@@ -3,9 +3,7 @@ package com.novaCart.controllers;
 import com.novaCart.advices.ApiResponse;
 import com.novaCart.dto.OrdersRequestDto;
 import com.novaCart.dto.OrdersResponseDto;
-import com.novaCart.dto.ProductDto;
 import com.novaCart.dto.TopOrdersResponse;
-import com.novaCart.repository.OrdersRepository;
 import com.novaCart.services.OrdersService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +24,7 @@ public class OrderController {
 
     @PostMapping(path = "/save")
     public ResponseEntity<OrdersResponseDto> createOrder(@Valid @RequestBody OrdersRequestDto ordersRequestDto){
+        log.info("-->hell{}"+ordersRequestDto);
         OrdersResponseDto productDto=ordersService.createOrder(ordersRequestDto);
         return  new ResponseEntity<>(productDto, HttpStatus.CREATED);
     }
@@ -41,8 +40,9 @@ public class OrderController {
     }
 
     @GetMapping("/analytics/top-customers")
-    public ResponseEntity<List<TopOrdersResponse>> getTopOrderOfCustomers() {
-        return ResponseEntity.ok(ordersService.getTopOrderOfCustomers());
+    public ResponseEntity<List<TopOrdersResponse>> getTopOrderOfCustomers( @RequestParam(defaultValue = "3") Integer limit) {
+        log.info("-->get customers:{}"+limit);
+        return ResponseEntity.ok(ordersService.getTopOrderOfCustomers(limit));
     }
 
 }

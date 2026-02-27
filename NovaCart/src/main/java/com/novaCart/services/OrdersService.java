@@ -15,5 +15,5 @@ public interface OrdersService {
 
     ApiResponse<OrdersResponseDto> getOrderById(Long orderId);
 
-    List<TopOrdersResponse> getTopOrderOfCustomers();
+    List<TopOrdersResponse> getTopOrderOfCustomers(Integer limit);
 }
