@@ -1,10 +1,8 @@
 package com.novaCart.controllers;
 
 import com.novaCart.advices.ApiResponse;
-import com.novaCart.dto.OrdersRequestDto;
-import com.novaCart.dto.OrdersResponseDto;
-import com.novaCart.dto.ProductDto;
-import com.novaCart.dto.TopOrdersResponse;
+import com.novaCart.dto.*;
+import com.novaCart.dto.orderResonses.OrdersGroupByStatusDto;
 import com.novaCart.repository.OrdersRepository;
 import com.novaCart.services.OrdersService;
 import jakarta.validation.Valid;
@@ -44,5 +42,14 @@ public class OrderController {
     public ResponseEntity<List<TopOrdersResponse>> getTopOrderOfCustomers() {
         return ResponseEntity.ok(ordersService.getTopOrderOfCustomers());
     }
+
+    @GetMapping(path = "/categories")
+    public ResponseEntity<List<OrdersGroupByStatusDto>> ordersGroupBy() {
+        return ResponseEntity.ok(ordersService.ordersGroupBy());
+    }
+
+
+//    @GetMapping(path = "/api/analytics/monthly-revenue")
+//    public ResponseEntity<MonthlyRevenueDTO>  get
 
 }

@@ -1,10 +1,8 @@
 package com.novaCart.services.Impl;
 
 import com.novaCart.advices.ApiResponse;
-import com.novaCart.dto.OrderItemResponseDto;
-import com.novaCart.dto.OrdersRequestDto;
-import com.novaCart.dto.OrdersResponseDto;
-import com.novaCart.dto.TopOrdersResponse;
+import com.novaCart.dto.*;
+import com.novaCart.dto.orderResonses.OrdersGroupByStatusDto;
 import com.novaCart.entity.CustomersEntity;
 import com.novaCart.entity.OrderItemsEntity;
 import com.novaCart.entity.OrdersEntity;
@@ -25,6 +23,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -178,6 +178,37 @@ public class OrdersServiceImpl implements OrdersService{
         List<TopOrdersResponse> topCustomers=ordersRepository.findTopCustomers().stream().limit(3).toList();
         return topCustomers;
     };
+
+
+    @Override
+    public List<OrdersGroupByStatusDto> ordersGroupBy() {
+
+        Map<OrderStatus, List<OrdersDto>> orderStatusListMap =
+                ordersRepository.findAll()
+                        .stream()
+                        .map(this::entityToDto)
+                        .collect(Collectors.groupingBy(OrdersDto::getOrderStatus));
+
+        return orderStatusListMap.entrySet().stream().map(entry->
+                        OrdersGroupByStatusDto.builder()
+                                .status(entry.getKey())
+                                .orders(entry.getValue())
+                                .build()
+                ).toList();
+    }
+
+    private  OrdersDto entityToDto(OrdersEntity orders){
+        return OrdersDto.builder()
+                .id(orders.getId())
+                .orderStatus(orders.getOrderStatus())
+                .customerId(orders.getCustomer().getId())
+                .totalAmount(orders.getTotalAmount())
+                .createdAt(orders.getCreatedAt())
+                .updatedAt(orders.getUpdatedAt())
+                .deletedAt(orders.getDeletedAt())
+                .build();
+
+    }
 
 
 

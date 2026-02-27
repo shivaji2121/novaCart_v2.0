@@ -1,6 +1,7 @@
 package com.novaCart.services.Impl;
 
 import com.novaCart.dto.ProductDto;
+import com.novaCart.dto.productResponse.ProductCategoryResponse;
 import com.novaCart.entity.ProductsEntity;
 import com.novaCart.exception.ResourceAlreadyExistsException;
 import com.novaCart.repository.ProductRepository;
@@ -9,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +37,20 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
 
     }
+
+    @Override
+    public List<ProductCategoryResponse> getProductsByCategory() {
+        Map<String,List<ProductDto>> productCategoryList=productRepository.findAll().stream().map(this::EntityToDto).collect(Collectors.groupingBy(ProductDto::getCategory,
+                Collectors.toList()));
+
+        return productCategoryList.entrySet().stream().map(entry->
+                    ProductCategoryResponse.builder()
+                            .productStatus(entry.getKey())
+                            .products(entry.getValue())
+                            .build()
+                ).toList();
+
+    };
 
     private ProductsEntity toEntity(ProductDto productDto){
         return  ProductsEntity.builder()

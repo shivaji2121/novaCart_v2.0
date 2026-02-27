@@ -1,6 +1,7 @@
 package com.novaCart.controllers;
 
 import com.novaCart.dto.ProductDto;
+import com.novaCart.dto.productResponse.ProductCategoryResponse;
 import com.novaCart.services.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,5 +28,10 @@ public class ProductController {
     public  ResponseEntity<List<ProductDto>> getAllProducts(){
         List<ProductDto> list=productService.getAllProducts();
         return ResponseEntity.ok(list);
+    }
+
+    @GetMapping(path = "/categories")
+    public ResponseEntity<List<ProductCategoryResponse>> getProductsByCategory(){
+        return ResponseEntity.ok(productService.getProductsByCategory());
     }
 }

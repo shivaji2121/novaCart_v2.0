@@ -25,13 +25,10 @@ import java.time.LocalDateTime;
 public class OrdersDto {
     private  Long id;
 
-
-    private CustomersEntity customer;
+    private Long customerId;
 
     private OrderStatus orderStatus;
 
-    @NotNull(message = "Order amount is required")
-    @Positive(message = "Order amount cannot be negative")
     private BigDecimal totalAmount;
 
     private LocalDateTime createdAt;
