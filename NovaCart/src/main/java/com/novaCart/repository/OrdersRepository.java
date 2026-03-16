@@ -37,7 +37,7 @@ public interface OrdersRepository extends JpaRepository<OrdersEntity,Long> {
         SELECT o.products.id, o.products.name, SUM(o.quantity)
         FROM OrderItemsEntity o
         GROUP BY o.products.id, o.products.name
-        ORDER BY SUM(o.quantity) DESC
+        ORDER BY SUM(o.quantity) DESC LIMIT 1
         """)
     List<TopProductDTO> findTopSellingProducts();
 }

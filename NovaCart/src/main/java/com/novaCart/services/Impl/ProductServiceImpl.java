@@ -95,14 +95,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<TopProductDTO> getTopSoldProducts() {
-        return ordersRepository.findTopSellingProducts().stream().map(item->
-                TopProductDTO.builder()
-                        .productId(item.getProductId())
-                        .productName(item.getProductName())
-                        .totalSold(item.getTotalSold())
-                        .build())
-                .limit(3)
-                .toList();
+//        return ordersRepository.findTopSellingProducts().stream().map(item->
+//                TopProductDTO.builder()
+//                        .productId(item.getProductId())
+//                        .productName(item.getProductName())
+//                        .totalSold(item.getTotalSold())
+//                        .build())
+//                .limit(1)
+//                .toList();
+
+        return ordersRepository.findTopSellingProducts();
     }
 
 
