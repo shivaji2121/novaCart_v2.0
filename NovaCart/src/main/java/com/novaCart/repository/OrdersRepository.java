@@ -1,6 +1,7 @@
 package com.novaCart.repository;
 
 import com.novaCart.dto.TopOrdersResponse;
+import com.novaCart.dto.TopProductDTO;
 import com.novaCart.entity.OrdersEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -30,4 +31,13 @@ public interface OrdersRepository extends JpaRepository<OrdersEntity,Long> {
          
     """)
     List<TopOrdersResponse> findTopCustomers();
+
+
+    @Query("""
+        SELECT o.products.id, o.products.name, SUM(o.quantity)
+        FROM OrderItemsEntity o
+        GROUP BY o.products.id, o.products.name
+        ORDER BY SUM(o.quantity) DESC
+        """)
+    List<TopProductDTO> findTopSellingProducts();
 }

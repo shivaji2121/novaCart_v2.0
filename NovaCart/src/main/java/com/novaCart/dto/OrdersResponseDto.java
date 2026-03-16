@@ -1,5 +1,6 @@
 package com.novaCart.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.novaCart.utils.OrderStatus;
 import lombok.Builder;
 import lombok.Data;
@@ -16,8 +17,11 @@ public class OrdersResponseDto {
     private String customerName;
     private OrderStatus orderStatus;
     private BigDecimal totalAmount;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime deletedAt;
     private List<OrderItemResponseDto> items;
 }

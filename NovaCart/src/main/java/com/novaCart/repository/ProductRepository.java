@@ -19,7 +19,20 @@ public interface ProductRepository extends JpaRepository<ProductsEntity,Long> , 
     Optional<ProductsEntity> findByIdAndDeletedAtIsNull(Long id);
 
 
-    Page<ProductsEntity>  findByNameContainingIgnoreCaseAndCategoryContainingIgnoreCase(String name,
-                                                                                        String category,
-                                                                                        Pageable pageable);
+    Page<ProductsEntity>  findByNameContainingIgnoreCaseAndCategoryContainingIgnoreCaseAndDeletedAtIsNull(String name,
+                                                                                        String category, Pageable pageable);
+
+    @Query("""
+        SELECT p FROM ProductsEntity p
+        WHERE p.deletedAt IS NULL
+        AND (:search IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')))
+        AND (:minPrice IS NULL OR p.price >= :minPrice)
+        AND (:maxPrice IS NULL OR p.price <= :maxPrice)
+        """)
+    Page<ProductsEntity> findProducts(
+            @Param("search") String search,
+            @Param("minPrice") Double minPrice,
+            @Param("maxPrice") Double maxPrice,
+            Pageable pageable
+    );
 }

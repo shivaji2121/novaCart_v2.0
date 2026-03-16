@@ -1,5 +1,6 @@
 package com.novaCart.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.novaCart.entity.CustomersEntity;
 import com.novaCart.utils.OrderStatus;
@@ -34,9 +35,10 @@ public class OrdersDto {
     @Positive(message = "Order amount cannot be negative")
     private BigDecimal totalAmount;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private  LocalDateTime deletedAt;
 }

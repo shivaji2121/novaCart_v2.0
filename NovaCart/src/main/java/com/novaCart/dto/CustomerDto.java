@@ -1,5 +1,6 @@
 package com.novaCart.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.novaCart.utils.CustomerStatus;
 import jakarta.validation.Valid;
@@ -40,10 +41,14 @@ public class CustomerDto {
 
     @NotNull(message = "Date of birth is required")
     @Past(message = "Date of birth must be in the past")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime deletedAt;
 
 

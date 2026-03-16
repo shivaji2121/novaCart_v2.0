@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -43,7 +44,7 @@ public class OrdersServiceImpl implements OrdersService {
     public OrdersResponseDto createOrder(OrdersRequestDto ordersRequestDto) {
         CustomersEntity customer = customerRepository.findActiveCustomerById(ordersRequestDto.getCustomerId())
                 .orElseThrow(() -> new ResourceNofFoundException("Customer not found"));
-log.info("1..>{}"+customer);
+
         List<OrderItemsEntity> orderItems = ordersRequestDto.getItems().stream().map(itemDto -> {
             ProductsEntity product = productRepository.findByIdAndDeletedAtIsNull(itemDto.getProductId())
                     .orElseThrow(() -> new ResourceNofFoundException("product not found with id: " + itemDto.getProductId()));
@@ -67,7 +68,7 @@ log.info("1..>{}"+customer);
                     .build();
 
         }).toList();
-        log.info("1..>{}"+orderItems);
+
         BigDecimal totalPrice = orderItems.stream()
                 .map(OrderItemsEntity::getPriceAtOrder)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -79,7 +80,7 @@ log.info("1..>{}"+customer);
                 .orderItems(orderItems)
                 .build();
 
-//        orderItems.forEach(item -> item.setOrders(order));
+        orderItems.forEach(item -> item.setOrders(order));
 
         OrdersEntity savedOrder = ordersRepository.save(order);
 
@@ -93,7 +94,7 @@ log.info("1..>{}"+customer);
                         .build())
                 .toList();
 
-        log.info("2..>{}"+itemsDto);
+
         return OrdersResponseDto.builder()
                 .id(savedOrder.getId())
                 .customerId(customer.getId())
@@ -176,13 +177,10 @@ log.info("1..>{}"+customer);
 
     @Override
     public List<TopOrdersResponse> getTopOrderOfCustomers(Integer limit) {
-        log.info("{}"+limit);
         List<TopOrdersResponse> topCustomers = ordersRepository.findTopCustomers().stream().limit(limit).toList();
-        log.info("{}"+topCustomers);
         return topCustomers;
     }
 
-    ;
 
 
 }

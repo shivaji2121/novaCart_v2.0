@@ -1,7 +1,10 @@
 package com.novaCart.services;
 
 
+import com.novaCart.advices.ApiError;
+import com.novaCart.advices.ApiResponse;
 import com.novaCart.dto.ProductDto;
+import com.novaCart.dto.TopProductDTO;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 
@@ -13,4 +16,10 @@ public interface ProductService {
     List<ProductDto> getAllProducts();
 
     Page<ProductDto> getAllProductsByPagination(Integer page, Integer pageSize, String search, String category);
+
+    ApiResponse<String> deleteProductById(Long productId);
+
+    Page<ProductDto> getAllProductsByList(String search, String sortBy, String sortDir, Double minPrice, Double maxPrice, Integer page, Integer pageSize);
+
+    List<TopProductDTO> getTopSoldProducts();
 }

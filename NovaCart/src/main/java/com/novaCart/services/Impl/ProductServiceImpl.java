@@ -1,10 +1,16 @@
 package com.novaCart.services.Impl;
 
+import com.novaCart.advices.ApiResponse;
 import com.novaCart.dto.ProductDto;
+import com.novaCart.dto.TopProductDTO;
+import com.novaCart.entity.OrderItemsEntity;
 import com.novaCart.entity.ProductsEntity;
 import com.novaCart.exception.ResourceAlreadyExistsException;
+import com.novaCart.repository.OrderItemsRepository;
+import com.novaCart.repository.OrdersRepository;
 import com.novaCart.repository.ProductRepository;
 import com.novaCart.services.ProductService;
+import com.novaCart.utils.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -13,7 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -23,6 +30,9 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final OrderItemsRepository orderItemsRepository;
+    private final OrdersRepository ordersRepository;
+
 
     @Override
     public ProductDto createProduct(ProductDto productDto) {
@@ -37,8 +47,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDto> getAllProducts() {
-
-
        return productRepository.findAll().stream()
                 .map(productsEntity ->EntityToDto(productsEntity) )
                 .toList();
@@ -53,8 +61,48 @@ public class ProductServiceImpl implements ProductService {
 
         category=(category==null)?"":category;
 
-        Page<ProductsEntity> listOfProducts=productRepository.findByNameContainingIgnoreCaseAndCategoryContainingIgnoreCase(search,category,pageable);
+        Page<ProductsEntity> listOfProducts=productRepository.findByNameContainingIgnoreCaseAndCategoryContainingIgnoreCaseAndDeletedAtIsNull(search,category,pageable);
         return listOfProducts.map(this::EntityToDto);
+    }
+
+    @Override
+    public ApiResponse<String> deleteProductById(Long productId) {
+        ProductsEntity savedProduct=productRepository.findByIdAndDeletedAtIsNull(productId).orElseThrow(()->new RuntimeException("Product not found with id: "+productId));
+        savedProduct.setDeletedAt(LocalDateTime.now());
+        productRepository.save(savedProduct);
+        return new ApiResponse<>("Product deleted successfully");
+    }
+
+    @Override
+    public Page<ProductDto> getAllProductsByList(String search, String sortBy, String sortDir, Double minPrice, Double maxPrice, Integer page, Integer pageSize) {
+
+        int pageNumber=(page <= 0) ? 0 : page - 1;
+
+        search = (search == null) ? "" : search;
+
+        sortBy = (sortBy == null || sortBy.isBlank()) ? "createdAt" : sortBy;
+        sortDir = (sortDir == null || sortDir.isBlank()) ? "desc" : sortDir;
+
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+
+        Page<ProductsEntity> listOfProducts = productRepository.findProducts(search, minPrice, maxPrice, pageable);
+        return listOfProducts.map(this::EntityToDto);
+    }
+
+    @Override
+    public List<TopProductDTO> getTopSoldProducts() {
+        return ordersRepository.findTopSellingProducts().stream().map(item->
+                TopProductDTO.builder()
+                        .productId(item.getProductId())
+                        .productName(item.getProductName())
+                        .totalSold(item.getTotalSold())
+                        .build())
+                .limit(3)
+                .toList();
     }
 
 

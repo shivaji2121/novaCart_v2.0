@@ -1,6 +1,7 @@
 package com.novaCart.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.novaCart.entity.CustomersEntity;
 import jakarta.validation.constraints.NotBlank;
@@ -35,9 +36,11 @@ public class AddressDto {
 
     @NotBlank(message = "Zip code is required")
     private String zipCode;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime deletedAt;
 
     public CustomersEntity customersEntity;

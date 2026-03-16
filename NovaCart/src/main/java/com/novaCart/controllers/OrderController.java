@@ -24,7 +24,6 @@ public class OrderController {
 
     @PostMapping(path = "/save")
     public ResponseEntity<OrdersResponseDto> createOrder(@Valid @RequestBody OrdersRequestDto ordersRequestDto){
-        log.info("-->hell{}"+ordersRequestDto);
         OrdersResponseDto productDto=ordersService.createOrder(ordersRequestDto);
         return  new ResponseEntity<>(productDto, HttpStatus.CREATED);
     }
@@ -41,8 +40,10 @@ public class OrderController {
 
     @GetMapping("/analytics/top-customers")
     public ResponseEntity<List<TopOrdersResponse>> getTopOrderOfCustomers( @RequestParam(defaultValue = "3") Integer limit) {
-        log.info("-->get customers:{}"+limit);
         return ResponseEntity.ok(ordersService.getTopOrderOfCustomers(limit));
     }
+
+
+
 
 }

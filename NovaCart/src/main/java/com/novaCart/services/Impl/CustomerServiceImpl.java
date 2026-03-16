@@ -2,6 +2,7 @@ package com.novaCart.services.Impl;
 
 import com.novaCart.dto.AddressDto;
 import com.novaCart.dto.CustomerDto;
+import com.novaCart.dto.TopNCustomersOrders;
 import com.novaCart.entity.AddressEntity;
 import com.novaCart.entity.CustomersEntity;
 import com.novaCart.repository.CustomerRepository;
@@ -63,6 +64,21 @@ public class CustomerServiceImpl implements CustomerService {
         return toDto(savedCustomer);
 
 
+    }
+
+    @Override
+    public List<TopNCustomersOrders> getTopNOrdersOfCustomers(Integer count) {
+
+        List<TopNCustomersOrders> entityList=customerRepository.findAll().stream()
+                .filter(customers -> customers.getOrders()!=null && customers.getOrders().size()>count)
+                .map(customers -> TopNCustomersOrders
+                                .builder()
+                                .customerId(customers.getId())
+                                .name(customers.getName())
+                                .ordersCount(customers.getOrders().size())
+                                .build())
+                .toList();
+        return entityList;
     }
 
     private CustomerDto toDto(CustomersEntity customer) {
