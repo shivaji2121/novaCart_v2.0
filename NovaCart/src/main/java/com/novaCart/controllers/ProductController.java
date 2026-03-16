@@ -63,6 +63,11 @@ public class ProductController {
         return ResponseEntity.ok(productService.getTopSoldProducts());
     };
 
+
+    @GetMapping(path = "/price")
+    public ResponseEntity< List<ProductDto> > getTopProductsByPrice(){
+        return ResponseEntity.ok(productService.getTopProductsByPrice());
+    };
 //
 //    @GetMapping(path = "/list-all")
 //    public ResponseEntity<Page<ProductDto>> getAllProductsByPagination(

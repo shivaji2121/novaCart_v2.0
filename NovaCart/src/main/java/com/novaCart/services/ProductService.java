@@ -1,11 +1,9 @@
 package com.novaCart.services;
 
 
-import com.novaCart.advices.ApiError;
 import com.novaCart.advices.ApiResponse;
 import com.novaCart.dto.ProductDto;
 import com.novaCart.dto.TopProductDTO;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -22,4 +20,6 @@ public interface ProductService {
     Page<ProductDto> getAllProductsByList(String search, String sortBy, String sortDir, Double minPrice, Double maxPrice, Integer page, Integer pageSize);
 
     List<TopProductDTO> getTopSoldProducts();
+
+    List<ProductDto>  getTopProductsByPrice();
 }

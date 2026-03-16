@@ -1,8 +1,10 @@
 package com.novaCart.repository;
 
+import com.novaCart.dto.ProductDto;
 import com.novaCart.dto.TopOrdersResponse;
 import com.novaCart.dto.TopProductDTO;
 import com.novaCart.entity.OrdersEntity;
+import com.novaCart.entity.ProductsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -40,4 +42,28 @@ public interface OrdersRepository extends JpaRepository<OrdersEntity,Long> {
         ORDER BY SUM(o.quantity) DESC LIMIT 1
         """)
     List<TopProductDTO> findTopSellingProducts();
+
+
+//    @Query("""
+//             SELECT p.ProductsEntity.id,
+//             p.ProductsEntity.name,
+//             p.ProductsEntity.category,
+//             p.ProductsEntity.price,
+//              p.ProductsEntity.quantity,
+//              p.ProductsEntity.description,
+//              p.ProductsEntity.created_at,
+//              p.ProductsEntity.updated_at,
+//              p.ProductsEntity.deleted_at
+//              from ProductsEntity p
+//            ORDER BY p.ProductsEntity.price DESC
+//            LIMIT 5
+//        """)
+
+    @Query("""
+       SELECT p
+       FROM ProductsEntity p
+       ORDER BY p.price DESC LIMIT 5
+       """)
+    List<ProductsEntity> findTopProductsByPrice();
+
 }

@@ -107,6 +107,26 @@ public class ProductServiceImpl implements ProductService {
         return ordersRepository.findTopSellingProducts();
     }
 
+    @Override
+    public List<ProductDto> getTopProductsByPrice() {
+
+        return ordersRepository.findTopProductsByPrice()
+                .stream()
+                .map(item -> ProductDto.builder()
+                        .id(item.getId())
+                        .name(item.getName())
+                        .category(item.getCategory())
+                        .price(item.getPrice())
+                        .quantity(item.getQuantity())
+                        .description(item.getDescription())
+                        .createdAt(item.getCreatedAt())
+                        .updatedAt(item.getUpdatedAt())
+                        .deletedAt(item.getDeletedAt())
+                        .build())
+                .toList();
+
+    }
+
 
     private ProductsEntity toEntity(ProductDto productDto){
         return  ProductsEntity.builder()
