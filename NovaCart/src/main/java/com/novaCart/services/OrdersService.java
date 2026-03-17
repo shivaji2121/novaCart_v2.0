@@ -1,9 +1,8 @@
 package com.novaCart.services;
 
 import com.novaCart.advices.ApiResponse;
-import com.novaCart.dto.OrdersRequestDto;
-import com.novaCart.dto.OrdersResponseDto;
-import com.novaCart.dto.TopOrdersResponse;
+import com.novaCart.dto.*;
+import com.novaCart.entity.OrderItemsEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -17,4 +16,5 @@ public interface OrdersService {
 
     List<TopOrdersResponse> getTopOrderOfCustomers(Integer limit);
 
+    List<OrderItemOfLastWeekDto> getLastWeekOrders();
 }

@@ -1,10 +1,7 @@
 package com.novaCart.services.Impl;
 
 import com.novaCart.advices.ApiResponse;
-import com.novaCart.dto.OrderItemResponseDto;
-import com.novaCart.dto.OrdersRequestDto;
-import com.novaCart.dto.OrdersResponseDto;
-import com.novaCart.dto.TopOrdersResponse;
+import com.novaCart.dto.*;
 import com.novaCart.entity.CustomersEntity;
 import com.novaCart.entity.OrderItemsEntity;
 import com.novaCart.entity.OrdersEntity;
@@ -24,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -181,6 +179,13 @@ public class OrdersServiceImpl implements OrdersService {
         return topCustomers;
     }
 
+    @Override
+    public List<OrderItemOfLastWeekDto> getLastWeekOrders() {
+        LocalDateTime start = LocalDate.now().minusDays(7).atStartOfDay();
+        LocalDateTime end = LocalDate.now().atTime(23, 59, 59);
+        List<OrderItemOfLastWeekDto> orders=orderItemsRepository.getOrdersLast7Days(start,end);
+        return orders;
+    }
 
 
 }

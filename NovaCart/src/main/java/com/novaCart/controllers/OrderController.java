@@ -1,9 +1,9 @@
 package com.novaCart.controllers;
 
 import com.novaCart.advices.ApiResponse;
-import com.novaCart.dto.OrdersRequestDto;
-import com.novaCart.dto.OrdersResponseDto;
-import com.novaCart.dto.TopOrdersResponse;
+import com.novaCart.dto.*;
+import com.novaCart.entity.OrderItemsEntity;
+import com.novaCart.entity.OrdersEntity;
 import com.novaCart.services.OrdersService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +44,10 @@ public class OrderController {
     }
 
 
+    @GetMapping("/last-7-days")
+    public  ResponseEntity< List<OrderItemOfLastWeekDto>> getLastWeekOrders(){
+        return ResponseEntity.ok(ordersService.getLastWeekOrders());
+    }
 
 
 }
